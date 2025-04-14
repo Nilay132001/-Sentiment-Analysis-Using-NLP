@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Signup</h1>
+
+    <input id="username" type="text" placeholder="Username" class="w-full mb-4 p-3 border rounded-xl focus:outline-none focus:ring focus:border-blue-300" />
+    <input id="password" type="password" placeholder="Password" class="w-full mb-4 p-3 border rounded-xl focus:outline-none focus:ring focus:border-blue-300" />
+
+    <button onclick="signup()" class="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">Create Account</button>
+
+    <p class="mt-4 text-center text-sm">Already have an account?
+      <a href="login.html" class="text-blue-600 hover:underline">Login</a>
+    </p>
+  </div>
+
+  <script>
+    async function signup() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch("http://127.0.0.1:8000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Signup successful! Please login.");
+        window.location.href = "login.html";
+      } else {
+        alert(data.detail || "Signup failed");
+      }
+    }
+  </script>
+</body>
+</html>

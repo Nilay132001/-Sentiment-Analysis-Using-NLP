@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
+
+    <input id="username" type="text" placeholder="Username" class="w-full mb-4 p-3 border rounded-xl focus:outline-none focus:ring focus:border-blue-300" />
+    <input id="password" type="password" placeholder="Password" class="w-full mb-4 p-3 border rounded-xl focus:outline-none focus:ring focus:border-blue-300" />
+
+    <button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">Login</button>
+
+    <p class="mt-4 text-center text-sm">Don't have an account?
+      <a href="signup.html" class="text-blue-600 hover:underline">Signup</a>
+    </p>
+  </div>
+
+  <script>
+    async function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch("http://127.0.0.1:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.access_token);
+        alert("Login successful!");
+        window.location.href = "index.html";
+      } else {
+        alert(data.detail || "Login failed");
+      }
+    }
+  </script>
+</body>
+</html>

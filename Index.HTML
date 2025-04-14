@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emotion Classifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-xl">
+    <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Emotion Detector</h1>
+    
+    <textarea id="inputText" placeholder="Type something..." class="w-full p-4 border rounded-xl focus:outline-none focus:ring focus:border-blue-300 resize-none" rows="4"></textarea>
+    
+    <button onclick="analyzeText()" class="w-full mt-4 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">Analyze Emotion</button>
+    <button onclick="logout()" class="w-full mt-4 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">Logout</button>
+    <div id="result" class="mt-6 text-center hidden">
+      <p class="text-lg font-semibold text-gray-700">Detected Emotion:</p>
+      <img id="emotionImage" class="w-40 h-40 mx-auto mt-4 rounded-full shadow-md" src="" alt="Emotion Image">
+    </div>
+  </div>
+
+  <script>
+    async function analyzeText() {
+      const text = document.getElementById('inputText').value;
+      if (!text.trim()) return alert("Please enter some text");
+
+     const token = localStorage.getItem("token");
+
+const response = await fetch("http://127.0.0.1:8000/predict", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  },
+  body: JSON.stringify({ text: text })
+});
+
+
+      const data = await response.json();
+      const emotionMap = {
+        0: { label: "Irrelevant", image: "images/irrelevant.png" },
+        1: { label: "Negative", image: "images/negative.png" },
+        2: { label: "Neutral", image: "images/neutral.png" },
+        3: { label: "Positive", image: "images/positive.png" }
+      };
+
+      const result = emotionMap[data.prediction];
+      document.getElementById("emotionImage").src = result.image;
+      document.getElementById("result").classList.remove("hidden");
+    }
+  </script>
+  
+
+  <script>
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+  </script>
+
+</body>
+</html>
